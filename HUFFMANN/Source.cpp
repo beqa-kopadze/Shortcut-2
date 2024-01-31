@@ -610,83 +610,93 @@
  	}
  	return out;
  }
- void encode(string filename) {
- 	huffman<char, int> tree;
- 	ifstream input;
- 	ofstream output;
- 	string inputFileName = filename;
- 	string file_name = filename;
- 	file_name.pop_back();
- 	file_name.pop_back();
- 	file_name.pop_back();
- 	file_name.pop_back();
- 	string outputFileName = filename + ".binary";
- 	input.open(inputFileName);
- 	output.open(outputFileName, ios::binary);
- 	if (!input.is_open())
- 	{
- 		cout << "error while opening the file, plz check the spelling or that the file exist" << endl;
- 		return;
- 	}
- 	priority_queue<MinHeapNode*, vector<MinHeapNode*>, compare> minHeap;
- 	vector<dataFreq> dafeq;
- 	int totalfrq;
- 	vector <string> access;
- 	string bufferstr = "";
- 	unsigned char* arr;
- 	char c;
- 	// counting the frequences
- 	while (input.get(c)) {
- 		if (tree.search(c)) {
- 			tree.update(c);
- 		}
- 		else {
- 			tree.insert(c, 1);
- 		}
- 	}
- 	input.close();
- 	tree.fillArray(dafeq);
- 	/*for (int i = 0; i < dafeq.size(); i++) {
- 		cout << dafeq[i].data << ' ' << dafeq[i].freq << ' ';
- 	}*/
- 	access.resize(255);
- 	HuffmanCodes(dafeq, dafeq.size(), access, minHeap, totalfrq);
- 	output << dafeq.size() << ' ';
- 	for (int i = 0; i < dafeq.size(); i++) {
- 		output << dafeq[i].data << ' ' << dafeq[i].freq << ' ';
- 	}
- 	float resultLength = 0;
- 	float entropy = 0;
- 	for (int i = 0; i < dafeq.size(); i++) {
- 		if (dafeq[i].data > 0)
- 			resultLength += (dafeq[i].freq / float(totalfrq)) * access[dafeq[i].data].length();
- 	}
- 	for (int i = 0; i < dafeq.size(); i++) {
- 		float p = (dafeq[i].freq / float(totalfrq));
- 		if (dafeq[i].data > 0)
- 			entropy += p * log2f(p);
- 	}
- 	entropy = entropy * -1;
- 	input.open(inputFileName);
- 	while (!input.eof()) {
+  void encode(string filename) {
+  	huffman<char, int> tree;
+  	ifstream input;
+  	ofstream output;
+  	string inputFileName = filename;
+  	string file_name = filename;
+  	file_name.pop_back();
+  	file_name.pop_back();
+  	file_name.pop_back();
+  	file_name.pop_back();
+  	string outputFileName = file_name + ".binary";
+  	input.open(inputFileName);
+  	output.open(outputFileName, ios::binary);
+  	if (!input.is_open())
+  	{
+  		cout << "error while opening the file, plz check the spelling or that the file exist" << endl;
+  		return;
+  	}
+  	priority_queue<MinHeapNode*, vector<MinHeapNode*>, compare> minHeap;
+  	vector<dataFreq> dafeq;
+  	int totalfrq;
+  	vector <string> access;
+  	string bufferstr = "";
+  	unsigned char* arr;
+  	char c;
+  	// counting the frequences
+  	while (input.get(c)) {
+  		if (tree.search(c)) {
+  			tree.update(c);
+  		}
+  		else {
+  			tree.insert(c, 1);
+  		}
+  	}
+  	input.close();
+  	tree.fillArray(dafeq);
+  	/*for (int i = 0; i < dafeq.size(); i++) {
+  		cout << dafeq[i].data << ' ' << dafeq[i].freq << ' ';
+  	}*/
+  	access.resize(255);
+  	HuffmanCodes(dafeq, dafeq.size(), access, minHeap, totalfrq);
+  	output << dafeq.size() << ' ';
+  	for (int i = 0; i < dafeq.size(); i++) {
+  		output << dafeq[i].data << ' ' << dafeq[i].freq << ' ';
+  	}
+  	float resultLength = 0;
+  	float entropy = 0;
+  	for (int i = 0; i < dafeq.size(); i++) {
+  		if (dafeq[i].data > 0)
+  			resultLength += (dafeq[i].freq / float(totalfrq)) * access[dafeq[i].data].length();
+  	}
+  	for (int i = 0; i < dafeq.size(); i++) {
+  		float p = (dafeq[i].freq / float(totalfrq));
+  		if (dafeq[i].data > 0)
+  			entropy += p * log2f(p);
+  	}
+  	entropy = entropy * -1;
+  	input.open(inputFileName);
+  	while (!input.eof()) {
+ 		cout<<"we are in a wile loop";
+ 		//cin;
+ 		//cin.ignore();
  		do {
+ 			cout<<"now we are in a do while loo";
+ 			//cin;
+ 			//cin.ignore();
  			input.get(c);
  			if (c > 0)
  			{
  				bufferstr += access[c];
  			}
  		} while (bufferstr.length() % 8 != 0 && !input.eof());
- 		//	cout << bufferstr.length() << endl;
+ 		cout << bufferstr.length() << endl;
  		int size = toBin(bufferstr, arr);
  		for (int i = 0; i < ceil(bufferstr.length() / 8.0); i++)
  			output << arr[i];
  		bufferstr = "";
  	}
- 	cout << "*  encoding efficiency  = " << entropy / float(resultLength) << endl;
- 	cout << "** compression ratio = " << filesize(outputFileName.c_str()) << " / " << filesize(inputFileName.c_str()) <<
- 		" = " << filesize(outputFileName.c_str()) / float(filesize(inputFileName.c_str())) << endl;;
- 	cout << "DONE!!" << endl;
- }
+ 	cout<<"we reach the and";
+ 	cin;
+ 	cin.ignore();
+  	//cout << "*  encoding efficiency  = " << entropy / float(resultLength) << endl;
+  	//cout << "** compression ratio = " << filesize(outputFileName.c_str()) << " / " << filesize(inputFileName.c_str()) <<
+  	//	" = " << filesize(outputFileName.c_str()) / float(filesize(inputFileName.c_str())) << endl;;
+  	//cout << "DONE!!" << endl;
+  }
+
  void decode(string filename) {
  	ofstream decode;
  	ifstream input;
@@ -744,20 +754,17 @@
  	string filename = argv[1];
  	string action = argv[2];
  	char op = action[0];;	
- 	do {	
- 		//encoding 
- 		switch (op) {
- 		case 'e':
- 			encode(filename);
- 			break;
- 		case 'd':
- 			decode(filename);
- 			break;
- 		default:
- 			cout << "Enter the operation again, please!" << endl;
+	//encoding 
+	switch (op) {
+	case 'e':
+		encode(filename);
+		break;
+	case 'd':
+		decode(filename);
+		break;
+	default:
+		cout << "Enter the operation again, please!" << endl;
  		}			
- 	} while (op != 'q');
  	system("pause");
  	return 0;
  } 
-
